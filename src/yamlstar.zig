@@ -17,7 +17,7 @@ const builtin = @import("builtin");
 // This value is automatically updated by 'make bump'.
 // The version number is used to find the correct shared library file.
 // We currently only support binding to an exact version of libyamlstar.
-pub const yamlstar_version = "0.1.18";
+pub const yamlstar_version = "0.1.19";
 
 // We currently only support platforms that GraalVM supports.
 // Windows uses an unversioned file name, matching the Python binding:
@@ -42,6 +42,7 @@ const CreateIsolateFn = *const fn (
 const TearDownIsolateFn = *const fn (?*anyopaque) callconv(.c) c_int;
 const LoadYamlstarFn = *const fn (
     ?*anyopaque,
+    [*:0]const u8,
     [*:0]const u8,
 ) callconv(.c) ?[*:0]const u8;
 
@@ -196,6 +197,7 @@ pub const YAMLStar = struct {
         const resp_ptr = self.yamlstar_load(
             self.isolate_thread,
             input_z,
+            "{}",
         ) orelse return Error.NullResponse;
 
         // Decode the JSON response:
